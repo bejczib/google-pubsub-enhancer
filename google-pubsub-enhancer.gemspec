@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'google/pubsub/enhancer/version'
+require 'google-pubsub-enhancer/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "google-pubsub-enhancer"
-  spec.version       = Google::Pubsub::Enhancer::VERSION
+  spec.version       = GooglePubsubEnhancer::VERSION
   spec.authors       = ["bejczib"]
   spec.email         = ["TODO: Write your email address"]
 

@@ -1,2 +1,2 @@
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
-require "google/pubsub/enhancer"
+$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+require "google_pubsub_enhancer"
