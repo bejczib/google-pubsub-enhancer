@@ -22,7 +22,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+
+require 'google_pubsub_enhancer'
+
+app = GooglePubsubEnhancer.new do
+
+  use YourMiddleware
+  use GooglePubsubEnhancer::Publisher,
+    short_topic_name: short_topic_name,
+    messages: messages
+end
+
+app.run(subscription_name)
+
+```
 
 ## Development
 
@@ -38,4 +52,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
