@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 
-  spec.add_dependency "middleware"
-  spec.add_dependency "google-cloud-pubsub"
+  spec.add_dependency "middleware", "~>0"
+  spec.add_dependency "google-cloud-pubsub", "~>0"
 end
