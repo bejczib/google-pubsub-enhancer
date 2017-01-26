@@ -10,7 +10,6 @@ class GooglePubsubEnhancer::Publisher
   def call(env)
     google_cloud_pubsub.publish(@full_topic_name) do |publisher|
       [*env[@messages_key]].each do |m|
-        p m
         publisher.publish(m)
       end
     end
