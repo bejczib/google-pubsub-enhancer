@@ -35,6 +35,7 @@ class GooglePubsubEnhancer
       break if opts[:shutdown].call || received_messages == nil
       next if received_messages.empty?
       @stack.call({received_messages: received_messages})
+      subscription.acknowledge(received_messages)  
     end
   end
 

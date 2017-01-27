@@ -13,6 +13,7 @@ describe GooglePubsubEnhancer do
     allow(ENV).to receive(:[]).with("PUBSUB_KEYFILE_JSON").and_return(JSON.dump({project_id: 'cica'}))
     allow(Google::Cloud::Pubsub).to receive_message_chain(:new,:subscription).and_return(subscription)
     allow(subscription).to receive(:pull).and_return(received_messages, nil)
+    allow(subscription).to receive(:acknowledge).with(received_messages)
   end
 
   describe "#run" do
