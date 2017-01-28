@@ -1,4 +1,4 @@
-class GooglePubsubEnhancer::Publisher
+class GooglePubsubEnhancer::Middleware::Publisher
 
   def initialize(app, opts={})
     @app = app

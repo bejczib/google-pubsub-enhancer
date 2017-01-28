@@ -3,7 +3,9 @@ require 'middleware'
 require 'google/cloud/pubsub'
 
 class GooglePubsubEnhancer
-  require 'google_pubsub_enhancer/publisher'
+
+  require_relative 'google_pubsub_enhancer/middleware'
+
   class << self
     def name_by(type, name)
       raise unless %w(topics subscriptions).include?(type)
@@ -17,7 +19,7 @@ class GooglePubsubEnhancer
   end
 
   def initialize(&block)
-    @stack = Middleware::Builder.new(&block)
+    @stack = ::Middleware::Builder.new(&block)
   end
 
   def run(subscription_short_name, opts={})
@@ -35,7 +37,7 @@ class GooglePubsubEnhancer
       break if opts[:shutdown].call || received_messages == nil
       next if received_messages.empty?
       @stack.call({received_messages: received_messages})
-      subscription.acknowledge(received_messages)  
+      subscription.acknowledge(received_messages)
     end
   end
 

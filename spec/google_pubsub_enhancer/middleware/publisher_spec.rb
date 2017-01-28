@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe GooglePubsubEnhancer::Publisher do
+describe GooglePubsubEnhancer::Middleware::Publisher do
 
   let(:instance) { described_class.new(app, short_topic_name: short_topic_name, messages: messages)}
   let(:app) { double 'chained_middleware'}
