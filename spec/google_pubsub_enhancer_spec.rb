@@ -30,6 +30,18 @@ describe GooglePubsubEnhancer do
       subject
     end
 
+    context "when the env variables are not setted" do
+
+      before do
+        allow(ENV).to receive(:[]).and_return(nil)
+      end
+
+      it "should raise exception" do
+        expect{subject}.to raise_error(Exception, 'Environment not setted properly')
+      end
+
+    end
+
     context 'when middleware is used ' do
       let(:elements) { [] }
       let(:block) do
@@ -75,7 +87,7 @@ describe GooglePubsubEnhancer do
     end
 
 
-    context 'maxx pull size constant has value' do
+    context 'max pull size constant has value' do
       let(:user_defined_amount) {rand(1..20)}
       before{ stub_const("GooglePubsubEnhancer::Constants::MAX_PULL_SIZE", user_defined_amount) }
 

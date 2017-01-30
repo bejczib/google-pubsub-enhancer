@@ -16,6 +16,8 @@ class GooglePubsubEnhancer
     def pubsub_config
       key = ::Google::Cloud::Pubsub::Credentials::JSON_ENV_VARS.find { |n| !ENV[n].nil? }
       @pubsub_config ||= JSON.parse(ENV[key])
+    rescue => ex
+      raise Exception, 'Environment not setted properly'
     end
   end
 
@@ -44,6 +46,8 @@ class GooglePubsubEnhancer
 
   def create_subscription(subscription_short_name)
     Google::Cloud::Pubsub.new.subscription(self.class.name_by('subscriptions', subscription_short_name))
+  rescue => ex
+    raise Exception, 'Environment not setted properly'
   end
 
   def configurate_options(opts)
