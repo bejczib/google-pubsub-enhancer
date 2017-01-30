@@ -4,6 +4,7 @@ require 'google/cloud/pubsub'
 
 class GooglePubsubEnhancer
 
+  require_relative 'google_pubsub_enhancer/constants'
   require_relative 'google_pubsub_enhancer/middleware'
 
   class << self
@@ -33,7 +34,7 @@ class GooglePubsubEnhancer
   private
 
   def work(subscription, opts)
-    while received_messages = subscription.pull
+    while received_messages = subscription.pull(:max => GooglePubsubEnhancer::Constants::MAX_PULL_SIZE)
       break if opts[:shutdown].call || received_messages == nil
       next if received_messages.empty?
       @stack.call({received_messages: received_messages})

@@ -38,6 +38,10 @@ app.run(subscription_name)
 
 ```
 
+## ENV
+
+To configure how much message should be pulled, use the GOOGLE_PUBSUB_ENHANCER_MAX_PULL_SIZE env variable with an integer value
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
