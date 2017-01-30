@@ -74,6 +74,17 @@ describe GooglePubsubEnhancer do
       end
     end
 
+
+    context 'maxx pull size constant has value' do
+      let(:user_defined_amount) {rand(1..20)}
+      before{ stub_const("GooglePubsubEnhancer::Constants::MAX_PULL_SIZE", user_defined_amount) }
+
+      it 'should be used for setting max amount for pulling from subscription' do
+        expect(subscription).to receive(:pull).with({:max => user_defined_amount}).and_return(nil)
+        subject
+      end
+    end
+
     context 'when shutdown specified' do
       before do
         opts[:shutdown] = proc { true }
