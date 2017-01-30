@@ -22,7 +22,7 @@ describe GooglePubsubEnhancer do
       instance.run(subscription_short_name, opts)
     end
 
-    it ' should create a google pubsub subscription' do
+    it 'should create a google pubsub subscription' do
       expected_subscription_name = 'projects/cica/subscriptions/subscription_short_name'
       expect(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription)
         .with(expected_subscription_name)
@@ -33,6 +33,7 @@ describe GooglePubsubEnhancer do
     context "when the env variables are not setted" do
 
       before do
+        described_class.instance_exec{ @pubsub_config = nil}
         allow(ENV).to receive(:[]).and_return(nil)
       end
 

@@ -22,7 +22,7 @@ class GooglePubsubEnhancer
   end
 
   def initialize(&block)
-    @stack = ::Middleware::Builder.new(&block)
+    @stack = ::Middleware::Builder.new(&block).__send__(:to_app)
   end
 
   def run(subscription_short_name, opts={})
