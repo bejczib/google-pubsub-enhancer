@@ -4,8 +4,9 @@ require 'google/cloud/pubsub'
 
 class GooglePubsubEnhancer
 
-  require_relative 'google_pubsub_enhancer/constants'
-  require_relative 'google_pubsub_enhancer/middleware'
+  require 'google_pubsub_enhancer/constants'
+  require 'google_pubsub_enhancer/middleware'
+  require 'google_pubsub_enhancer/spec'
 
   class << self
     def name_by(type, name)
