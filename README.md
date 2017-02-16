@@ -28,10 +28,12 @@ require 'google_pubsub_enhancer'
 
 app = GooglePubsubEnhancer.new do
 
+  # you can get your messages from env[:received_messages]
+  # Be aware of the messages you got are pubsub objects. You van get your messages by calling map(&:data) on it.
   use YourMiddleware
   use GooglePubsubEnhancer::Publisher,
     short_topic_name: short_topic_name,
-    messages: messages
+    messages: messages_key_you_declare
 end
 
 app.run(subscription_name)
@@ -41,6 +43,43 @@ app.run(subscription_name)
 ## ENV
 
 To configure how much message should be pulled, use the GOOGLE_PUBSUB_ENHANCER_MAX_PULL_SIZE env variable with an integer value
+
+## Test
+
+You can test your enhancer like:
+
+```ruby
+require 'spec_helper'
+
+describe YourApplication do
+
+  include GooglePubsubEnhancer::Spec
+
+  #the only user specific setting you need
+  let(:messages) {[{foo:1}, {bar:2}]}
+
+  it "should do the magic you write into" do
+
+    app = GooglePubsubEnhancer.new do
+
+      # in this case the test middleware creates messages from pubsub objects
+      use YourMiddleware, -> env do
+        env[:messages_key] = env[:received_messages].map(&:data)
+      end
+
+      use GooglePubsubEnhancer::Middleware::Publisher,
+        short_topic_name: 'short_topic_name',
+        messages: :messages_key
+    end
+
+    # the only expectation you need (further more you can check the)
+    expect(publisher).to receive(:publish).with({foo:1}).ordered
+    expect(publisher).to receive(:publish).with({bar:2}).ordered
+
+    app.run 'subscription_short_name'
+  end
+end
+```
 
 ## Development
 
