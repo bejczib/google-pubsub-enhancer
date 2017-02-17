@@ -14,6 +14,7 @@ describe GooglePubsubEnhancer do
     allow(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription).and_return(subscription)
     allow(subscription).to receive(:pull).and_return(received_messages, nil)
     allow(subscription).to receive(:acknowledge).with(received_messages)
+    allow(logger).to receive(:debug) 
   end
 
   describe '#run' do
@@ -28,6 +29,7 @@ describe GooglePubsubEnhancer do
       expect(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription)
         .with(expected_subscription_name)
         .and_return(subscription)
+      expect(logger).to receive(:debug)
       subject
     end
 
@@ -54,6 +56,7 @@ describe GooglePubsubEnhancer do
       end
 
       it 'should pull the messages from the subscription' do
+        expect(logger).to receive(:debug)
         subject
         expect(elements).to match_array(received_messages)
       end

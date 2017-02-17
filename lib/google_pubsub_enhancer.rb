@@ -43,6 +43,7 @@ class GooglePubsubEnhancer
     while received_messages = subscription.pull(:max => GooglePubsubEnhancer::Constants::MAX_PULL_SIZE)
       break if opts[:shutdown].call || received_messages == nil
       next if received_messages.empty?
+      @logger.debug{"#{received_messages.length} messages received"}
       @stack.call({received_messages: received_messages})
       subscription.acknowledge(received_messages)
     end
