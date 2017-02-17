@@ -1,6 +1,7 @@
 require 'json'
 require 'middleware'
 require 'google/cloud/pubsub'
+require 'logger'
 
 class GooglePubsubEnhancer
 
@@ -22,7 +23,8 @@ class GooglePubsubEnhancer
     end
   end
 
-  def initialize(&block)
+  def initialize(logger: Logger.new(STDOUT),&block)
+    @logger = logger
     @stack = ::Middleware::Builder.new(&block).__send__(:to_app)
   end
 
@@ -30,7 +32,8 @@ class GooglePubsubEnhancer
     configurated_options = configurate_options(opts)
     subscription = create_subscription(subscription_short_name)
     work(subscription, configurated_options)
-  rescue
+  rescue => ex
+    @logger.error "Retry: #{ex} "
     retry
   end
 

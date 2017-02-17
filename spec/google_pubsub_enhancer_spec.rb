@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe GooglePubsubEnhancer do
-  let(:instance) { described_class.new(&block) }
+  let(:instance) { described_class.new(logger: logger,&block) }
+  let(:logger) { double 'logger' }
   let(:block) { proc {} }
   let(:subscription) { double 'subscription' }
   let(:received_messages) { [double('message')] }
@@ -80,8 +81,9 @@ describe GooglePubsubEnhancer do
         end
       end
 
-      it 'should retry the working process' do
+      it 'should retry the working process and log event' do
         allow(subscription).to receive(:pull).and_return(['LOL'], received_messages, nil)
+        expect(logger).to receive(:error)
         expect { subject }.to_not raise_error
         expect(elements).to match_array(received_messages)
       end
