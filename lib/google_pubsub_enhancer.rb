@@ -40,6 +40,7 @@ class GooglePubsubEnhancer
   private
 
   def work(subscription, opts)
+    return if opts[:shutdown].call
     while received_messages = subscription.pull(:max => GooglePubsubEnhancer::Constants::MAX_PULL_SIZE)
       break if opts[:shutdown].call || received_messages == nil
       next if received_messages.empty?

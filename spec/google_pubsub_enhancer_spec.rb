@@ -14,7 +14,7 @@ describe GooglePubsubEnhancer do
     allow(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription).and_return(subscription)
     allow(subscription).to receive(:pull).and_return(received_messages, nil)
     allow(subscription).to receive(:acknowledge).with(received_messages)
-    allow(logger).to receive(:debug) 
+    allow(logger).to receive(:debug)
   end
 
   describe '#run' do
@@ -122,6 +122,7 @@ describe GooglePubsubEnhancer do
       end
 
       it 'should be used for determining wheter it should stop or not the processing' do
+        expect(subscription).not_to receive(:pull)
         subject
         expect(elements).to eq []
       end
