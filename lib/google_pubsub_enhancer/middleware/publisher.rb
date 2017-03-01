@@ -16,6 +16,9 @@ class GooglePubsubEnhancer::Middleware::Publisher
         publisher.publish(m)
       end
     end
+  rescue => ex
+    @logger.error("Retry publisher: #{ex}")
+    retry
     @app.call(env)
   end
 
