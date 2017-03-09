@@ -13,7 +13,7 @@ describe GooglePubsubEnhancer do
     allow(ENV).to receive(:[]).with('PUBSUB_KEYFILE_JSON').and_return(JSON.dump(project_id: 'cica'))
     allow(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription).and_return(subscription)
     allow(subscription).to receive(:pull).and_return(received_messages, nil)
-    allow(subscription).to receive(:acknowledge).with(received_messages)
+    allow(subscription).to receive(:acknowledge)
     allow(logger).to receive(:debug)
   end
 
@@ -125,6 +125,17 @@ describe GooglePubsubEnhancer do
         expect(subscription).not_to receive(:pull)
         subject
         expect(elements).to eq []
+      end
+    end
+
+    context 'when nack is used' do
+      let(:received_messages) { [1,2]}
+      app = GooglePubsubEnhancer.new do
+        use NackMiddleware
+      end
+      it 'should ack only the acked messages' do
+        expect(subscription).to receive(:acknowledge).with([2])
+        app.run(subscription_short_name, opts)
       end
     end
   end

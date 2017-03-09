@@ -47,6 +47,7 @@ class GooglePubsubEnhancer
       @logger.debug{"#{received_messages.length} messages received"}
       env = {received_messages: received_messages, nacked_messages: []}
       @stack.call(env)
+      p env
       subscription.acknowledge(env[:received_messages] - env[:nacked_messages])
     end
   end
