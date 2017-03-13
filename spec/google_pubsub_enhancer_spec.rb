@@ -10,12 +10,17 @@ describe GooglePubsubEnhancer do
   let(:subscription_short_name) { 'subscription_short_name' }
 
   before do
-    allow(ENV).to receive(:[]).with('PUBSUB_KEYFILE_JSON').and_return(JSON.dump(project_id: 'cica'))
+    ENV['PUBSUB_KEYFILE_JSON'] = JSON.dump(project_id: 'cica')
     allow(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription).and_return(subscription)
     allow(subscription).to receive(:pull).and_return(received_messages, nil)
     allow(subscription).to receive(:acknowledge)
     allow(logger).to receive(:debug)
   end
+
+  after do
+    ENV.delete 'PUBSUB_KEYFILE_JSON'
+  end
+
 
   describe '#run' do
     let(:opts) { {} }
