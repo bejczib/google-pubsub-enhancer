@@ -14,12 +14,17 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
   subject { instance.call env }
 
   before do
-    allow(ENV).to receive(:[]).with("PUBSUB_KEYFILE_JSON").and_return(JSON.dump({project_id: 'cica'}))
+    ENV['PUBSUB_KEYFILE_JSON'] = JSON.dump(project_id: 'cica')
     allow(Google::Cloud::Pubsub).to receive(:new).and_return(pubsub_client_mock)
     allow(pubsub_client_mock).to receive(:publish).with("projects/cica/topics/valami").and_yield(publisher_mock)
     allow(app).to receive(:call)
     allow(logger).to receive(:debug)
   end
+
+  after do
+    ENV.delete 'PUBSUB_KEYFILE_JSON'
+  end
+
 
   it 'should push the received elements to google pubsub topic' do
     expect(publisher_mock).to receive(:publish).with({korte: 1})
