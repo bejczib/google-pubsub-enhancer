@@ -6,8 +6,8 @@ require 'google_pubsub_enhancer/version'
 Gem::Specification.new do |spec|
   spec.name          = "google-pubsub-enhancer"
   spec.version       = GooglePubsubEnhancer::VERSION
-  spec.authors       = ["bejczib"]
-  spec.email         = ["bejczi.balint@gmail.com"]
+  spec.authors       = ["bejczib","karoly_bujtor"]
+  spec.email         = ["bejczi.balint@gmail.com","bujtor.karoly@gmail.com"]
 
   spec.summary       = %q{Enhancement for a pipeline built with Google PubSub Services }
   spec.homepage      = "http://github.com/bejczib/google-pubsub-enhancer"
