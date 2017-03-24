@@ -10,15 +10,17 @@ class GooglePubsubEnhancer::Middleware::Publisher
   end
 
   def call(env)
-    @logger.debug("#{env[@messages_key].length} messages published")
-    @google_cloud_pubsub.publish(@full_topic_name) do |publisher|
-      [*env[@messages_key]].each do |m|
-        publisher.publish(m)
+    begin
+      @logger.debug("#{env[@messages_key].length} messages published")
+      @google_cloud_pubsub.publish(@full_topic_name) do |publisher|
+        [*env[@messages_key]].each do |m|
+          publisher.publish(m)
+        end
       end
+    rescue => ex
+      @logger.error("Retry publisher: #{ex}")
+      retry
     end
-  rescue => ex
-    @logger.error("Retry publisher: #{ex}")
-    retry
     @app.call(env)
   end
 
