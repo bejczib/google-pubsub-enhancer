@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe GooglePubsubEnhancer do
-  let(:instance) { described_class.new(logger: logger,&block) }
+  let(:instance) { described_class.new(logger: logger, &block) }
   let(:logger) { double 'logger' }
   let(:block) { proc {} }
   let(:subscription) { double 'subscription' }
@@ -32,8 +32,8 @@ describe GooglePubsubEnhancer do
     it 'should create a google pubsub subscription' do
       expected_subscription_name = 'projects/cica/subscriptions/subscription_short_name'
       expect(Google::Cloud::Pubsub).to receive_message_chain(:new, :subscription)
-        .with(expected_subscription_name)
-        .and_return(subscription)
+                                           .with(expected_subscription_name)
+                                           .and_return(subscription)
       expect(logger).to receive(:debug)
       subject
     end
@@ -41,12 +41,12 @@ describe GooglePubsubEnhancer do
     context "when the env variables are not setted" do
 
       before do
-        described_class.instance_exec{ @pubsub_config = nil}
+        described_class.instance_exec { @pubsub_config = nil }
         allow(ENV).to receive(:[]).and_return(nil)
       end
 
       it "should raise exception" do
-        expect{subject}.to raise_error(Exception, 'Environment not setted properly')
+        expect { subject }.to raise_error(Exception, 'Environment not setted properly')
       end
 
     end
@@ -99,8 +99,8 @@ describe GooglePubsubEnhancer do
 
 
     context 'max pull size constant has value' do
-      let(:user_defined_amount) {rand(1..20)}
-      before{ stub_const("GooglePubsubEnhancer::Constants::MAX_PULL_SIZE", user_defined_amount) }
+      let(:user_defined_amount) { rand(1..20) }
+      before { stub_const("GooglePubsubEnhancer::Constants::MAX_PULL_SIZE", user_defined_amount) }
 
       it 'should be used for setting max amount for pulling from subscription' do
         expect(subscription).to receive(:pull).with({:max => user_defined_amount}).and_return(nil)
@@ -134,13 +134,30 @@ describe GooglePubsubEnhancer do
     end
 
     context 'when nack is used' do
-      let(:received_messages) { [1,2]}
+      let(:received_messages) { [1, 2] }
       app = GooglePubsubEnhancer.new do
         use NackMiddleware
       end
+
       it 'should ack only the acked messages' do
         expect(subscription).to receive(:acknowledge).with([2])
         app.run(subscription_short_name, opts)
+      end
+    end
+
+    context "when somthing went wrong during ack" do
+      let(:received_messages) { [1, 2] }
+      app = GooglePubsubEnhancer.new do
+        use TestMiddleware, proc {}
+      end
+
+      it "should retry acknowledge when it failed" do
+        counter = 0
+        allow(subscription).to receive(:acknowledge) do
+          counter += 1
+          raise('boom') if counter == 1
+        end
+        app.run "subscription_short"
       end
     end
   end

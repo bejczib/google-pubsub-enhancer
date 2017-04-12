@@ -47,7 +47,19 @@ class GooglePubsubEnhancer
       @logger.debug{"#{received_messages.length} messages received"}
       env = {received_messages: received_messages, nacked_messages: []}
       @stack.call(env)
-      subscription.acknowledge(env[:received_messages] - env[:nacked_messages])
+      acknowledge(subscription,env)
+    end
+  end
+
+  def acknowledge(subscription,env)
+    acked_messages = env[:received_messages] - env[:nacked_messages]
+    begin
+      subscription.acknowledge(acked_messages)
+    rescue 
+      acked_messages.each do |msg|
+        @logger.error "Retried acked message was: #{msg}"
+      end
+      retry
     end
   end
 
