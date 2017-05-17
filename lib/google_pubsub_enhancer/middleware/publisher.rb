@@ -1,3 +1,4 @@
+require 'digest'
 class GooglePubsubEnhancer::Middleware::Publisher
 
   def initialize(app, opts={})
@@ -14,7 +15,7 @@ class GooglePubsubEnhancer::Middleware::Publisher
       @logger.debug("#{env[@messages_key].length} messages published")
       @google_cloud_pubsub.publish(@full_topic_name) do |publisher|
         [*env[@messages_key]].each do |m|
-          publisher.publish(m)
+          publisher.publish(m, { recordId: Digest::MD5.hexdigest(m) })
         end
       end
     rescue => ex
