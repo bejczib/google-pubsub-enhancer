@@ -19,7 +19,6 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
     allow(pubsub_client_mock).to receive(:publish).with("projects/cica/topics/valami").and_yield(publisher_mock)
     allow(app).to receive(:call)
     allow(logger).to receive(:debug)
-    allow(Digest::MD5).to receive(:hexdigest).and_return('asd323asd')
   end
 
   after do
@@ -27,8 +26,8 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
   end
 
 
-  it 'should push the received elements with its md5 hash to google pubsub topic' do
-    expect(publisher_mock).to receive(:publish).with({korte: 1}, {recordId: 'asd323asd'})
+  it 'should push the received elements to google pubsub topic' do
+    expect(publisher_mock).to receive(:publish).with({korte: 1})
 
     subject
   end
@@ -37,7 +36,7 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
 
     before do
       call_count = 0
-      allow(publisher_mock).to receive(:publish).with({korte: 1},{recordId: 'asd323asd'}).twice do
+      allow(publisher_mock).to receive(:publish).with({korte: 1}).twice do
         raise "zsafol" if (call_count += 1) == 1
       end
        allow(logger).to receive(:error)
@@ -46,9 +45,9 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
 
 
     it "should retry the process and log event" do
-      expect(publisher_mock).to receive(:publish).with({korte: 1},{recordId: 'asd323asd'}).ordered
+      expect(publisher_mock).to receive(:publish).with({korte: 1}).ordered
       expect(logger).to receive(:error).with("Retry publisher: zsafol").ordered
-      expect(publisher_mock).to receive(:publish).with({korte: 1}, {recordId: 'asd323asd'}).ordered
+      expect(publisher_mock).to receive(:publish).with({korte: 1}).ordered
 
       subject
     end
