@@ -59,9 +59,6 @@ describe YourApplication do
   #set messages that come from a topic
   let(:messages) {[JSON.dump({foo:1}), JSON.dump({bar:2})]}
 
-  #set expected_messages that you expect to publish after your middleware's work done
-  let(:expected_messages) { [{"foo" => 1}, {"bar" => 2}]}
-
   it "should do the magic you write into" do
 
     app = GooglePubsubEnhancer.new do
@@ -79,7 +76,8 @@ describe YourApplication do
     end
 
     # the only expectation you need
-    publish_called_with expected_messages
+    publish_called_with({"foo" => 1})
+    publish_called_with({"bar" => 2})
 
     app.run 'subscription_short_name'
   end

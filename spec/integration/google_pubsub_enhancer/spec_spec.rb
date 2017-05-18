@@ -6,8 +6,6 @@ describe GooglePubsubEnhancer::Spec do
 
   let(:messages) {[JSON.dump({alma:1}), JSON.dump({korte: 2}) ]}
 
-  let(:expected_messages) { [ {"alma" => 1}, {"korte" => 2} ] }
-
   it "should behave like a pub/sub" do
 
     app = GooglePubsubEnhancer.new do
@@ -23,7 +21,8 @@ describe GooglePubsubEnhancer::Spec do
         messages: :messages_key
     end
 
-    publish_called_with expected_messages
+    publish_called_with({"alma"=>1})
+    publish_called_with({"korte"=>2})
 
     app.run 'subscription_short_name'
   end

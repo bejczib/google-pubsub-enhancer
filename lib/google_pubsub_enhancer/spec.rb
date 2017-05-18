@@ -16,7 +16,6 @@ module GooglePubsubEnhancer::Spec
         allow(publisher).to receive(:publish)
         allow(subscription).to receive(:acknowledge)
         allow(Digest::MD5).to receive(:hexdigest).and_return("a1s2d3f4g5")
-
       end
 
       after do
@@ -26,10 +25,8 @@ module GooglePubsubEnhancer::Spec
   end
 
   module PublisherTester
-    def publish_called_with(messages)
-      messages.each do |msg|
-        expect(publisher).to receive(:publish).with(msg, {recordId: "a1s2d3f4g5"} )
-      end
+    def publish_called_with(msg)
+      expect(publisher).to receive(:publish).with(msg, {recordId: "a1s2d3f4g5"}).ordered
     end
   end
 
