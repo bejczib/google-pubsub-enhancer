@@ -76,8 +76,8 @@ describe YourApplication do
     end
 
     # the only expectation you need
-    publish_called_with({"foo" => 1})
-    publish_called_with({"bar" => 2})
+    expect_publish_called_with({"foo" => 1})
+    expect_publish_called_with({"bar" => 2})
 
     app.run 'subscription_short_name'
   end

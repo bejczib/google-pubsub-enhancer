@@ -25,7 +25,7 @@ module GooglePubsubEnhancer::Spec
   end
 
   module PublisherTester
-    def publish_called_with(msg)
+    def expect_publish_called_with(msg)
       expect(publisher).to receive(:publish).with(msg, {recordId: "a1s2d3f4g5"}).ordered
     end
   end

@@ -21,8 +21,8 @@ describe GooglePubsubEnhancer::Spec do
         messages: :messages_key
     end
 
-    publish_called_with({"alma"=>1})
-    publish_called_with({"korte"=>2})
+    expect_publish_called_with({"alma"=>1})
+    expect_publish_called_with({"korte"=>2})
 
     app.run 'subscription_short_name'
   end
