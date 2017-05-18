@@ -37,7 +37,7 @@ describe GooglePubsubEnhancer::Middleware::Publisher do
 
     before do
       call_count = 0
-      allow(publisher_mock).to receive(:publish).with({korte: 1}, {recordId: "a1s2d3f4g5"}).twice doe
+      allow(publisher_mock).to receive(:publish).with({korte: 1}, {recordId: "a1s2d3f4g5"}).twice do
         raise "zsafol" if (call_count += 1) == 1
       end
        allow(logger).to receive(:error)
