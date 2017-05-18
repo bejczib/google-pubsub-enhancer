@@ -53,10 +53,14 @@ require 'spec_helper'
 
 describe YourApplication do
 
+  #include the test framework for end to end testing
   include GooglePubsubEnhancer::Spec
 
-  #the only user specific setting you need
-  let(:messages) {[{foo:1}, {bar:2}]}
+  #set messages that come from a topic
+  let(:messages) {[JSON.dump({foo:1}), JSON.dump({bar:2})]}
+
+  #set expected_messages that you expect to publish after your middleware's work done
+  let(:expected_messages) { [{"foo" => 1}, {"bar" => 2}]}
 
   it "should do the magic you write into" do
 
@@ -64,7 +68,9 @@ describe YourApplication do
 
       # in this case the test middleware creates messages from pubsub objects
       use YourMiddleware, -> env do
-        env[:messages_key] = env[:received_messages].map(&:data)
+        env[:messages_key] = env[:received_messages].map do |msg|
+          JSON.parse msg.data
+        end
       end
 
       use GooglePubsubEnhancer::Middleware::Publisher,
@@ -72,9 +78,8 @@ describe YourApplication do
         messages: :messages_key
     end
 
-    # the only expectation you need (further more you can check the)
-    expect(publisher).to receive(:publish).with({foo:1}).ordered
-    expect(publisher).to receive(:publish).with({bar:2}).ordered
+    # the only expectation you need
+    publish_called_with expected_messages
 
     app.run 'subscription_short_name'
   end

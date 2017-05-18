@@ -4,14 +4,18 @@ describe GooglePubsubEnhancer::Spec do
 
   include GooglePubsubEnhancer::Spec
 
-  let(:messages) {[{alma:1}, {korte: 2}]}
+  let(:messages) {[JSON.dump({alma:1}), JSON.dump({korte: 2}) ]}
+
+  let(:expected_messages) { [ {"alma" => 1}, {"korte" => 2} ] }
 
   it "should behave like a pub/sub" do
 
     app = GooglePubsubEnhancer.new do
 
       use TestMiddleware, -> env do
-        env[:messages_key] = env[:received_messages].map(&:data)
+         env[:messages_key] = env[:received_messages].map do |msg|
+          JSON.parse msg.data
+        end
       end
 
       use GooglePubsubEnhancer::Middleware::Publisher,
@@ -19,7 +23,8 @@ describe GooglePubsubEnhancer::Spec do
         messages: :messages_key
     end
 
-    expect(publisher).to receive(:publish).exactly(2).times
+    publish_called_with expected_messages
+
     app.run 'subscription_short_name'
   end
 end
